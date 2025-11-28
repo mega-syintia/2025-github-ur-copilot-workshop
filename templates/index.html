@@ -16,7 +16,42 @@
         <span id="cycle-type">Work Session</span>
         <span id="cycle-count">1/4</span>
       </div>
-      <div id="time">25:00</div>
+      
+      <!-- Circular Progress Bar with Visual Effects -->
+      <div id="progress-container">
+        <!-- Particle effects container -->
+        <div id="particles"></div>
+        <!-- Ripple effect container -->
+        <div id="ripple-container"></div>
+        
+        <svg id="progress-ring" viewBox="0 0 200 200">
+          <!-- Background circle -->
+          <circle 
+            class="progress-ring-bg" 
+            cx="100" 
+            cy="100" 
+            r="90" 
+            fill="none" 
+            stroke="#e0e0e0" 
+            stroke-width="10"
+          />
+          <!-- Progress circle -->
+          <circle 
+            id="progress-circle"
+            class="progress-ring-circle" 
+            cx="100" 
+            cy="100" 
+            r="90" 
+            fill="none" 
+            stroke="#4a90d9" 
+            stroke-width="10"
+            stroke-linecap="round"
+            transform="rotate(-90 100 100)"
+          />
+        </svg>
+        <div id="time">25:00</div>
+      </div>
+      
       <div id="controls">
         <button id="start">Start</button>
         <button id="pause">Pause</button>
