@@ -1,0 +1,114 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 2rem;
+  background: #f4f4f4;
+}
+
+#app {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+#time {
+  font-size: 4rem;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+#controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+#status {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+#history {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+#session-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+#cycle-type {
+  color: #2c5aa0;
+}
+
+#cycle-count {
+  color: #666;
+}
+
+#settings-section,
+#status-section,
+#history-section {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 6px;
+}
+
+#settings-section h3,
+#status-section h3,
+#history-section h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+}
+
+.setting-group {
+  margin-bottom: 0.8rem;
+}
+
+.setting-group label {
+  display: block;
+  font-weight: 500;
+}
+
+.setting-group input {
+  margin-left: 0.5rem;
+  padding: 0.25rem;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  width: 60px;
+}
+
+#save-settings {
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+}
+
+#save-settings:hover {
+  background: #218838;
+}
+
+#history .session-entry {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.8rem;
+}
+
+#history .session-entry:last-child {
+  border-bottom: none;
+}

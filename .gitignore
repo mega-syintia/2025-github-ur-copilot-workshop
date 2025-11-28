@@ -13,3 +13,5 @@ __pycache__/
 # Coverage
 .coverage
 htmlcov/
+
+._git_personal
