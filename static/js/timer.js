@@ -4,7 +4,10 @@ let timerState = {
   currentType: 'work', // 'work', 'shortBreak', 'longBreak'
   currentCycle: 1,
   remaining: 0,
-  intervalId: null
+  total: 0, // Total duration for current session
+  intervalId: null,
+  particleIntervalId: null,
+  rippleIntervalId: null
 };
 
 let settings = {
@@ -13,6 +16,9 @@ let settings = {
   longBreak: 15,
   cyclesUntilLong: 4
 };
+
+// Constants for progress ring calculations
+const PROGRESS_RING_CIRCUMFERENCE = 2 * Math.PI * 90; // ~565.48
 
 // Load settings from localStorage
 function loadSettings() {
@@ -64,9 +70,133 @@ function formatTime(sec) {
   return `${m}:${s}`;
 }
 
+// Update progress ring
+function updateProgressRing() {
+  const circle = document.getElementById('progress-circle');
+  if (!circle) return;
+  
+  const progress = timerState.total > 0 ? timerState.remaining / timerState.total : 1;
+  const offset = PROGRESS_RING_CIRCUMFERENCE * (1 - progress);
+  circle.style.strokeDasharray = PROGRESS_RING_CIRCUMFERENCE;
+  circle.style.strokeDashoffset = offset;
+}
+
+// Update color based on remaining time
+function updateProgressColor() {
+  const container = document.getElementById('progress-container');
+  if (!container) return;
+  
+  // Remove all color classes
+  container.classList.remove('color-blue', 'color-yellow', 'color-red', 'break-mode');
+  
+  // For break sessions, use green
+  if (timerState.currentType === 'shortBreak' || timerState.currentType === 'longBreak') {
+    container.classList.add('break-mode');
+    return;
+  }
+  
+  // For work sessions, change color based on time remaining
+  const progress = timerState.total > 0 ? timerState.remaining / timerState.total : 1;
+  
+  if (progress > 0.5) {
+    container.classList.add('color-blue');
+  } else if (progress > 0.2) {
+    container.classList.add('color-yellow');
+  } else {
+    container.classList.add('color-red');
+  }
+}
+
+// Create a single particle
+function createParticle() {
+  const container = document.getElementById('particles');
+  if (!container || !timerState.running) return;
+  
+  const particle = document.createElement('div');
+  particle.className = 'particle';
+  
+  // Random position around the center
+  const angle = Math.random() * 2 * Math.PI;
+  const radius = 60 + Math.random() * 20;
+  const startX = 110 + Math.cos(angle) * radius;
+  const startY = 110 + Math.sin(angle) * radius;
+  
+  // Random movement direction
+  const tx = (Math.random() - 0.5) * 80;
+  const ty = (Math.random() - 0.5) * 80 - 30; // Bias upward
+  
+  particle.style.left = startX + 'px';
+  particle.style.top = startY + 'px';
+  particle.style.setProperty('--tx', tx + 'px');
+  particle.style.setProperty('--ty', ty + 'px');
+  
+  container.appendChild(particle);
+  
+  // Remove particle after animation
+  setTimeout(() => {
+    if (particle.parentNode) {
+      particle.parentNode.removeChild(particle);
+    }
+  }, 3000);
+}
+
+// Create ripple effect
+function createRipple() {
+  const container = document.getElementById('ripple-container');
+  if (!container || !timerState.running) return;
+  
+  const ripple = document.createElement('div');
+  ripple.className = 'ripple';
+  container.appendChild(ripple);
+  
+  // Remove ripple after animation
+  setTimeout(() => {
+    if (ripple.parentNode) {
+      ripple.parentNode.removeChild(ripple);
+    }
+  }, 2000);
+}
+
+// Start visual effects
+function startVisualEffects() {
+  // Only show particles and ripples during work sessions
+  if (timerState.currentType === 'work') {
+    // Create particles at intervals
+    timerState.particleIntervalId = setInterval(createParticle, 500);
+    // Create ripples at intervals
+    timerState.rippleIntervalId = setInterval(createRipple, 3000);
+    // Initial effects
+    createParticle();
+    createRipple();
+  }
+}
+
+// Stop visual effects
+function stopVisualEffects() {
+  if (timerState.particleIntervalId) {
+    clearInterval(timerState.particleIntervalId);
+    timerState.particleIntervalId = null;
+  }
+  if (timerState.rippleIntervalId) {
+    clearInterval(timerState.rippleIntervalId);
+    timerState.rippleIntervalId = null;
+  }
+  
+  // Clear existing particles and ripples
+  const particles = document.getElementById('particles');
+  if (particles) particles.innerHTML = '';
+  
+  const ripples = document.getElementById('ripple-container');
+  if (ripples) ripples.innerHTML = '';
+}
+
 // Update all UI elements
 function updateUI() {
   document.getElementById('time').textContent = formatTime(timerState.remaining);
+  
+  // Update progress ring and color
+  updateProgressRing();
+  updateProgressColor();
   
   // Update session info
   const typeDisplay = timerState.currentType === 'work' ? 'Work Session' : 
@@ -118,6 +248,9 @@ function startTimer() {
     }
   }, 1000);
   
+  // Start visual effects
+  startVisualEffects();
+  
   const meta = {
     type: timerState.currentType,
     cycle: timerState.currentCycle,
@@ -141,6 +274,9 @@ function pauseTimer() {
   clearInterval(timerState.intervalId);
   timerState.running = false;
   
+  // Stop visual effects when paused
+  stopVisualEffects();
+  
   apiCall('/api/session', {
     event: 'paused',
     meta: { remaining: timerState.remaining, type: timerState.currentType }
@@ -157,6 +293,10 @@ function resetTimer() {
   timerState.currentType = 'work';
   timerState.currentCycle = 1;
   timerState.remaining = getCurrentDuration();
+  timerState.total = getCurrentDuration();
+  
+  // Stop visual effects on reset
+  stopVisualEffects();
   
   apiCall('/api/session', {
     event: 'reset',
@@ -172,6 +312,9 @@ function skipTimer() {
   clearInterval(timerState.intervalId);
   timerState.running = false;
   
+  // Stop visual effects on skip
+  stopVisualEffects();
+  
   apiCall('/api/session', {
     event: 'skipped',
     meta: { type: timerState.currentType, cycle: timerState.currentCycle }
@@ -185,6 +328,9 @@ function skipTimer() {
 function completeSession() {
   clearInterval(timerState.intervalId);
   timerState.running = false;
+  
+  // Stop visual effects on completion
+  stopVisualEffects();
   
   const completedType = timerState.currentType;
   const completedCycle = timerState.currentCycle;
@@ -217,6 +363,7 @@ function nextSession() {
   }
   
   timerState.remaining = getCurrentDuration();
+  timerState.total = getCurrentDuration();
   updateUI();
 }
 

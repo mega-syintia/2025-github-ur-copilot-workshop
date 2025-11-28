@@ -13,10 +13,150 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
+/* Progress Container and Circular Progress Bar */
+#progress-container {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 1rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#progress-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.progress-ring-bg {
+  opacity: 0.3;
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 1s linear, stroke 0.5s ease;
+  stroke-dasharray: 565.48;
+  stroke-dashoffset: 0;
+}
+
 #time {
-  font-size: 4rem;
+  font-size: 3rem;
   text-align: center;
-  margin: 1rem 0;
+  z-index: 10;
+  position: relative;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Particle effects container */
+#particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: particle-float 3s ease-out forwards;
+}
+
+@keyframes particle-float {
+  0% {
+    opacity: 0.8;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) scale(0.2);
+  }
+}
+
+/* Ripple effect container */
+#ripple-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid rgba(74, 144, 217, 0.5);
+  animation: ripple-expand 2s ease-out forwards;
+}
+
+@keyframes ripple-expand {
+  0% {
+    width: 60px;
+    height: 60px;
+    opacity: 1;
+  }
+  100% {
+    width: 220px;
+    height: 220px;
+    opacity: 0;
+  }
+}
+
+/* Color states for progress */
+.color-blue .progress-ring-circle,
+.color-blue .ripple {
+  stroke: #4a90d9;
+  border-color: rgba(74, 144, 217, 0.5);
+}
+
+.color-yellow .progress-ring-circle {
+  stroke: #f5a623;
+}
+.color-yellow .ripple {
+  border-color: rgba(245, 166, 35, 0.5);
+}
+
+.color-red .progress-ring-circle {
+  stroke: #d94a4a;
+}
+.color-red .ripple {
+  border-color: rgba(217, 74, 74, 0.5);
+}
+
+/* Particle colors based on state */
+.color-blue .particle {
+  background-color: #4a90d9;
+}
+
+.color-yellow .particle {
+  background-color: #f5a623;
+}
+
+.color-red .particle {
+  background-color: #d94a4a;
+}
+
+/* Break session - green theme */
+.break-mode .progress-ring-circle {
+  stroke: #28a745 !important;
+}
+.break-mode .ripple {
+  border-color: rgba(40, 167, 69, 0.5) !important;
+}
+.break-mode .particle {
+  background-color: #28a745 !important;
 }
 
 #controls {

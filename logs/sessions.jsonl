@@ -1,3 +1,0 @@
-{"timestamp": "2025-11-28T07:52:24.468948Z", "event": "reset", "meta": {}}
-{"timestamp": "2025-11-28T07:52:30.996808Z", "event": "started", "meta": {"type": "work", "cycle": 1, "duration": 0}}
-{"timestamp": "2025-11-28T07:52:32.515113Z", "event": "paused", "meta": {"remaining": 1499, "type": "work"}}
