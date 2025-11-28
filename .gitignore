@@ -15,3 +15,7 @@ __pycache__/
 htmlcov/
 
 ._git_personal
+
+# Log files (runtime data)
+logs/sessions.jsonl
+logs/status.json
